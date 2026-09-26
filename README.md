@@ -1,73 +1,109 @@
-# FIRE 2026 Task 1 — Statute Prediction (Team Approaching_Nirvana)
+<div align="center">
 
-Code for our submission to **Task 1: Statute Prediction** of the FIRE 2026 shared task
+# ⚖️ Grounded Statute Prediction — FIRE 2026 Task 1
+
+### Team *Approaching Nirvana*
+
+Hybrid **LLM + LegalBERT** pipeline for the FIRE 2026 shared task
 *"LLM as a Judge?: From Statute Prediction to Sycophancy Detection in Law."*
 
-Given the facts of an Indian criminal case, the system predicts the applicable Indian
-Penal Code (IPC) sections, extracts the supporting sentence for each, and produces a
-reasoning trace — evaluated on the expert-annotated **PROSLEX** dataset.
+[![Python](https://img.shields.io/badge/Python-3.10+-3776AB?logo=python&logoColor=white)](https://www.python.org/)
+[![PyTorch](https://img.shields.io/badge/PyTorch-EE4C2C?logo=pytorch&logoColor=white)](https://pytorch.org/)
+[![Transformers](https://img.shields.io/badge/🤗%20Transformers-FFD21E)](https://github.com/huggingface/transformers)
+[![Model](https://img.shields.io/badge/LLM-Qwen2.5--7B--Instruct-6f42c1)](https://huggingface.co/Qwen/Qwen2.5-7B-Instruct)
+[![Colab](https://img.shields.io/badge/Runs%20on-Colab%20T4-F9AB00?logo=googlecolab&logoColor=white)](https://colab.research.google.com/)
+[![License](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
+![Rank](https://img.shields.io/badge/Official%20Rank-5th%20%2F%2017-gold)
 
-Our best run placed **5th of 17 teams** (Macro-F1 0.4592, Micro-F1 0.6406).
+</div>
 
-## Approach
+---
 
-A hybrid pipeline combining a generative predictor with a supervised classifier:
+## 🎯 The Task
 
-- **Qwen2.5-7B-Instruct** (4-bit NF4) — primary, open-label statute predictor. Prompted
-  (zero-shot and few-shot) to emit a strict JSON object of statutes, verbatim evidence,
-  and reasoning.
-- **Evidence grounding** — every generated evidence span is snapped back to the closest
-  verbatim sentence of the case facts, so no quoted evidence is fabricated.
-- **LegalBERT** (`nlpaueb/legal-bert-base-uncased`) — fine-tuned multi-label classifier
-  used as a baseline and as a **fallback** when the LLM abstains, guaranteeing at least
-  one prediction per case.
-- **Validation** — output is normalized, de-duplicated, and checked against the exact
-  submission schema before serialization to JSONL.
+Given the **facts** of an Indian criminal case, the system must:
 
-See `figures/pipeline.drawio` for the architecture (open at https://app.diagrams.net).
+1. 📜 predict the applicable **Indian Penal Code (IPC)** sections,
+2. 🔎 point to the **verbatim sentence** that supports each one, and
+3. 🧠 produce a **reasoning trace** explaining the prediction.
 
-## Repository layout
+Evaluated on the expert-annotated **PROSLEX** dataset.
+
+## 🏆 Results
+
+Our best run (**Run 1**) placed **5th of 17 teams**.
+
+| Macro-F1 | Micro-F1 | Accuracy | ROUGE-L | BLEU |
+|:--------:|:--------:|:--------:|:-------:|:----:|
+| 0.4592   | 0.6406   | 0.4736   | 0.1660  | 0.0817 |
+
+## 🧩 Approach
+
+A hybrid pipeline that keeps a generative model's flexibility while enforcing evidential fidelity.
+
+| Stage | Component | Role |
+|------|-----------|------|
+| 🟢 Predict | **Qwen2.5-7B-Instruct** (4-bit NF4) | Open-label statute prediction via a strict JSON prompt (zero- & few-shot) |
+| 🟢 Ground | **difflib snapping** | Every evidence span is snapped to a verbatim fact sentence — no fabricated quotes |
+| 🟠 Fallback | **LegalBERT** (fine-tuned) | Supervised baseline **and** fallback so every case gets ≥ 1 statute |
+| 🔵 Validate | **schema check** | Normalize, de-duplicate, verify verbatim keys + schema before writing JSONL |
+
+<div align="center">
+
+*Architecture diagram: [`figures/pipeline.drawio`](figures/pipeline.drawio) — open at [diagrams.net](https://app.diagrams.net).*
+
+</div>
+
+## 📂 Repository Layout
 
 ```
-notebooks/Test_FIRE_task_1.ipynb   # end-to-end pipeline
-figures/pipeline.drawio            # architecture diagram (editable)
-requirements.txt                   # Python dependencies
+📦 fire2026-task1-statute-prediction
+├── 📓 notebooks/Test_FIRE_task_1.ipynb   # end-to-end pipeline
+├── 🖼️ figures/pipeline.drawio            # architecture diagram (editable)
+├── 📋 requirements.txt                   # Python dependencies
+└── 📄 LICENSE
 ```
 
-## Running
+## 🚀 Running
 
-The notebook is written for **Google Colab with a T4 GPU** (4-bit loading needs CUDA).
+Written for **Google Colab with a T4 GPU** (4-bit loading needs CUDA).
 
-1. Open `notebooks/Test_FIRE_task_1.ipynb` in Colab and select a GPU runtime.
-2. Place the dataset files at `/content/task1.jsonl` (train) and
-   `/content/task_1_statute_prediction.jsonl` (test).
-3. Run all. The pipeline writes `submission.jsonl`.
+```bash
+# local install (a CUDA GPU is required for 4-bit; use Qwen2.5-3B-Instruct on smaller GPUs)
+pip install -r requirements.txt
+```
 
-Locally: `pip install -r requirements.txt` and run the notebook with Jupyter (a CUDA GPU
-is required for the 4-bit model; switch to `Qwen2.5-3B-Instruct` for smaller GPUs).
+1. Open [`notebooks/Test_FIRE_task_1.ipynb`](notebooks/Test_FIRE_task_1.ipynb) in Colab, select a **GPU** runtime.
+2. Place the dataset at `/content/task1.jsonl` (train) and `/content/task_1_statute_prediction.jsonl` (test).
+3. **Run all** → the pipeline writes `submission.jsonl`.
 
-## Data
+## 🗂️ Data
 
-The **PROSLEX** dataset is provided by the shared-task organisers and is **not
-redistributed here**. Obtain it from the task organisers / dataset release:
-https://arxiv.org/abs/2608.08830
+The **PROSLEX** dataset belongs to the shared-task organisers and is **not redistributed here**.
+Obtain it from the official release → 🔗 https://arxiv.org/abs/2608.08830
 
-## Submission format
+## 🧾 Submission Format
 
-One JSON object per line with fields `id`, `fact`, `reasoning_traces`, and
-`explanation`, where `explanation` maps each verbatim evidence sentence to a list of IPC
-sections:
+One JSON object per line — `explanation` maps each verbatim evidence sentence to a list of IPC sections:
 
 ```json
-{"id": "ST-PRED-0001", "fact": "...", "reasoning_traces": "...",
- "explanation": {"<verbatim sentence>": ["IPC 302", "IPC 34"]}}
+{
+  "id": "ST-PRED-0001",
+  "fact": "...",
+  "reasoning_traces": "...",
+  "explanation": { "<verbatim sentence>": ["IPC 302", "IPC 34"] }
+}
 ```
 
-## Team
+## 👥 Team
 
-**Approaching_Nirvana** — Sayanjib Sur, Chayan Ghosh, Tohida Rehman
-Department of Information Technology, Jadavpur University, Kolkata, India
+**Approaching Nirvana** — Department of Information Technology, Jadavpur University, Kolkata, India
 
-## License
+- Sayanjib Sur
+- Chayan Ghosh
 
-Released under the MIT License (see `LICENSE`).
+*Under the guidance of **Dr. Tohida Rehman**.*
+
+## 📜 License
+
+Released under the [MIT License](LICENSE).
