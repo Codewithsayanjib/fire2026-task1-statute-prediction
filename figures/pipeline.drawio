@@ -1,0 +1,85 @@
+<mxfile host="app.diagrams.net" agent="fire2026" version="24.7.0">
+  <diagram id="archformal" name="Pipeline">
+    <mxGraphModel dx="1400" dy="800" grid="0" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1780" pageHeight="440" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+
+        <!-- ===== SHARED INPUT ===== -->
+        <mxCell id="in" value="task_1_statute_prediction.jsonl&#10;57 cases (id, fact)" style="shape=parallelogram;perimeter=parallelogramPerimeter;whiteSpace=wrap;html=1;fillColor=#eaf0f7;strokeColor=#2f3e4e;fontSize=11;fontFamily=Courier New;verticalAlign=middle;" vertex="1" parent="1">
+          <mxGeometry x="20" y="176" width="140" height="88" as="geometry" />
+        </mxCell>
+        <mxCell id="prep" value="Preprocess&#10;sentence split" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#f3f4f6;strokeColor=#555555;fontSize=11;verticalAlign=middle;" vertex="1" parent="1">
+          <mxGeometry x="190" y="182" width="150" height="76" as="geometry" />
+        </mxCell>
+
+        <!-- ===== LLM BRANCH (top) ===== -->
+        <mxCell id="hdrllm" value="LLM branch" style="text;html=1;align=left;verticalAlign=middle;fontSize=11;fontStyle=2;fontColor=#4e7a3a;" vertex="1" parent="1">
+          <mxGeometry x="380" y="34" width="200" height="18" as="geometry" />
+        </mxCell>
+        <mxCell id="prompt" value="Prompt build&#10;system + few-shot (k=3)" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#eaf2e9;strokeColor=#4e7a3a;fontSize=11;verticalAlign=middle;" vertex="1" parent="1">
+          <mxGeometry x="380" y="58" width="150" height="76" as="geometry" />
+        </mxCell>
+        <mxCell id="qwen" value="Qwen2.5-7B-Instruct&#10;4-bit, greedy" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#d9e8d4;strokeColor=#4e7a3a;fontSize=11;fontStyle=1;verticalAlign=middle;" vertex="1" parent="1">
+          <mxGeometry x="560" y="58" width="150" height="76" as="geometry" />
+        </mxCell>
+        <mxCell id="jext" value="JSON parse&#10;sections + reasoning" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#eaf2e9;strokeColor=#4e7a3a;fontSize=11;verticalAlign=middle;" vertex="1" parent="1">
+          <mxGeometry x="740" y="58" width="150" height="76" as="geometry" />
+        </mxCell>
+        <mxCell id="grd" value="Evidence grounding&#10;snap to fact sentence" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#eaf2e9;strokeColor=#4e7a3a;fontSize=11;verticalAlign=middle;" vertex="1" parent="1">
+          <mxGeometry x="920" y="58" width="150" height="76" as="geometry" />
+        </mxCell>
+
+        <!-- ===== LEGALBERT BRANCH (bottom) ===== -->
+        <mxCell id="hdrbert" value="LegalBERT branch" style="text;html=1;align=left;verticalAlign=middle;fontSize=11;fontStyle=2;fontColor=#9c6510;" vertex="1" parent="1">
+          <mxGeometry x="380" y="286" width="220" height="18" as="geometry" />
+        </mxCell>
+        <mxCell id="train" value="task1.jsonl&#10;525 cases" style="shape=cylinder3;boundedLbl=1;backgroundOutline=1;html=1;whiteSpace=wrap;fillColor=#f8ecd9;strokeColor=#9c6510;fontSize=10;fontFamily=Courier New;verticalAlign=middle;" vertex="1" parent="1">
+          <mxGeometry x="192" y="308" width="110" height="76" as="geometry" />
+        </mxCell>
+        <mxCell id="bft" value="LegalBERT fine-tune&#10;multi-label BCE" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#fbeedd;strokeColor=#9c6510;fontSize=11;verticalAlign=middle;" vertex="1" parent="1">
+          <mxGeometry x="380" y="308" width="150" height="76" as="geometry" />
+        </mxCell>
+        <mxCell id="thr" value="Sigmoid + threshold&#10;(val-tuned)" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#fbeedd;strokeColor=#9c6510;fontSize=11;verticalAlign=middle;" vertex="1" parent="1">
+          <mxGeometry x="560" y="308" width="150" height="76" as="geometry" />
+        </mxCell>
+        <mxCell id="rank" value="Rank, keep top-k&#10;(&#8805; 1 statute)" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#fbeedd;strokeColor=#9c6510;fontSize=11;verticalAlign=middle;" vertex="1" parent="1">
+          <mxGeometry x="740" y="308" width="150" height="76" as="geometry" />
+        </mxCell>
+
+        <!-- ===== CONVERGE ===== -->
+        <mxCell id="fb" value="LLM&#10;empty?" style="rhombus;whiteSpace=wrap;html=1;fillColor=#fcf3d6;strokeColor=#b8962e;fontSize=11;verticalAlign=middle;" vertex="1" parent="1">
+          <mxGeometry x="1110" y="178" width="120" height="92" as="geometry" />
+        </mxCell>
+        <mxCell id="asm" value="Assemble row&#10;explanation + traces" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#eef2f7;strokeColor=#2f3e4e;fontSize=11;verticalAlign=middle;" vertex="1" parent="1">
+          <mxGeometry x="1280" y="186" width="150" height="76" as="geometry" />
+        </mxCell>
+        <mxCell id="val" value="Validate schema&#10;verbatim + id align" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#eef2f7;strokeColor=#2f3e4e;fontSize=11;verticalAlign=middle;" vertex="1" parent="1">
+          <mxGeometry x="1460" y="186" width="150" height="76" as="geometry" />
+        </mxCell>
+        <mxCell id="out" value="submission&#10;.jsonl" style="shape=parallelogram;perimeter=parallelogramPerimeter;whiteSpace=wrap;html=1;fillColor=#dbe7d3;strokeColor=#3d6b2e;fontSize=11;fontFamily=Courier New;fontStyle=1;verticalAlign=middle;" vertex="1" parent="1">
+          <mxGeometry x="1640" y="186" width="110" height="76" as="geometry" />
+        </mxCell>
+
+        <!-- ===== EDGES (uniform dark, formal) ===== -->
+        <mxCell id="e0" value="57 cases" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;strokeWidth=1.2;strokeColor=#555555;fontSize=9;fontColor=#555555;" edge="1" parent="1" source="in" target="prep"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="e1" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;strokeWidth=1.2;strokeColor=#555555;exitX=1;exitY=0.25;exitDx=0;exitDy=0;" edge="1" parent="1" source="prep" target="prompt"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="e2" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;strokeWidth=1.2;strokeColor=#555555;exitX=1;exitY=0.75;exitDx=0;exitDy=0;" edge="1" parent="1" source="prep" target="bft"><mxGeometry relative="1" as="geometry" /></mxCell>
+
+        <mxCell id="e3" style="html=1;endArrow=block;strokeWidth=1.2;strokeColor=#555555;" edge="1" parent="1" source="prompt" target="qwen"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="e4" style="html=1;endArrow=block;strokeWidth=1.2;strokeColor=#555555;" edge="1" parent="1" source="qwen" target="jext"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="e5" style="html=1;endArrow=block;strokeWidth=1.2;strokeColor=#555555;" edge="1" parent="1" source="jext" target="grd"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="e6" value="predictions" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;strokeWidth=1.2;strokeColor=#555555;fontSize=9;fontColor=#555555;" edge="1" parent="1" source="grd" target="fb"><mxGeometry relative="1" as="geometry" /></mxCell>
+
+        <mxCell id="e7" value="train" style="html=1;endArrow=block;strokeWidth=1.2;strokeColor=#555555;dashed=1;fontSize=9;fontColor=#555555;" edge="1" parent="1" source="train" target="bft"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="e8" style="html=1;endArrow=block;strokeWidth=1.2;strokeColor=#555555;" edge="1" parent="1" source="bft" target="thr"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="e9" style="html=1;endArrow=block;strokeWidth=1.2;strokeColor=#555555;" edge="1" parent="1" source="thr" target="rank"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="e10" value="fallback" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;strokeWidth=1.2;strokeColor=#555555;dashed=1;fontSize=9;fontColor=#555555;exitX=1;exitY=0.5;exitDx=0;exitDy=0;" edge="1" parent="1" source="rank" target="fb"><mxGeometry relative="1" as="geometry" /></mxCell>
+
+        <mxCell id="e11" value="yes: BERT&#10;no: LLM" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;strokeWidth=1.2;strokeColor=#555555;fontSize=9;fontColor=#555555;" edge="1" parent="1" source="fb" target="asm"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="e12" style="html=1;endArrow=block;strokeWidth=1.2;strokeColor=#555555;" edge="1" parent="1" source="asm" target="val"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="e13" style="html=1;endArrow=block;strokeWidth=1.2;strokeColor=#555555;" edge="1" parent="1" source="val" target="out"><mxGeometry relative="1" as="geometry" /></mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>
